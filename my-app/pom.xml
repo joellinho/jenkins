@@ -1,0 +1,200 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.mycompany.app</groupId>
+  <artifactId>my-app</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>my-app</name>
+  <url>http://maven.apache.org</url>
+
+
+<build>
+  <!--todo lo que suceda aaqui sera cuando se construa el proyecto y genere el target de la app-->
+
+  <!-- deefine filtros para manejar recursos en la carpeta convencional y va  filtrar el uso de las variables definidas en el archivo de propiedades-->
+    <filters>
+      <filter>src/main/filters/filter.properties</filter>
+    </filters>
+<!--defiine un filtro de variables con una ruta determinada donde se gestionara informacion en cualquier archivo de este directorio ejm:application properties -->
+  <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  
+
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <version>3.3</version>
+      <configuration>
+        <source>1.5</source>
+        <target>1.5</target>
+      </configuration>
+    </plugin>
+  
+
+
+
+    
+      <!--ejecuta plugin objetivo run para varias phases:pre clean ,clean,postclean llamando a una tarea echo-->
+      
+      <!--<ejecutions> elemento está ahí. Eso es por lo que puede ejecutar el mismo objetivo varias veces con diferente configuración si es necesario. Ejecuciones separadas también se puede dar un ID de manera que durante la herencia o la aplicación de perfiles que puede controlar si la configuración objetivo se fusiona o se convirtió en una ejecución adicional.-->
+      
+
+      <!--Uno de los objetivos plug-in representa una tarea específica (más fina que una fase de creación) que contribuye a la construcción y gestión de un proyecto. Se puede unir a cero o más fases de construcción. Un objetivo no ligado a ninguna fase de construcción podría ser ejecutado fuera del ciclo de vida de la acumulación por la invocación directa. El orden de ejecución depende del orden en que se invocan el objetivo (s) y la fase (s) de construcció-->
+    <plugin>
+    
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-antrun-plugin</artifactId>
+      <version>1.1</version>
+
+      <executions>
+        <execution>
+          <id>id.pre-clean</id>
+          <phase>pre-clean</phase>
+          
+          <goals>
+            <goal>run</goal>
+          </goals>
+          <configuration>
+            <tasks>
+              <echo>1.-pre-clean phase!!!</echo>
+            </tasks>
+          </configuration>
+        </execution>
+
+        <execution>
+          <id>id.clean</id>
+          <phase>clean</phase>
+          <goals>
+            <goal>run</goal>
+          </goals>
+          <configuration>
+            <tasks>
+              <echo>2.-clean phase!!!</echo>
+            </tasks>
+          </configuration>
+        </execution>
+        
+        <execution>
+          <id>id.post-clean</id>
+          <phase>post-clean</phase>
+          <goals>
+            <goal>run</goal>
+          </goals>
+          <configuration>
+            <tasks>
+              <echo>3.-post-clean phase!!!</echo>
+            </tasks>
+          </configuration>
+        </execution>        
+        </executions>
+    </plugin>
+  </plugins>
+</build>
+<!--las propiedades sin como variables definidas en el pom para poder ser usadas cuando sea -->
+<properties>
+    <my.filter.value.pom>hello</my.filter.value.pom>
+
+    <version>3.8.1</version>
+      </properties>
+
+
+
+
+
+<profiles>
+  <profile>
+    <id>test</id>
+
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>1.1</version>
+            <executions>
+              <execution>
+                <phase>test</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <tasks>
+                    <echo>usando env.test.properties</echo>
+                    <copy file ="src/main/resources/env.properties" tofile="${project.build.outputDirectory}/enviroment.properties"/>
+                  </tasks>
+                </configuration>
+              </execution>
+            </executions>
+        </plugin>
+      </plugins>
+    </build>
+  
+  </profile>
+     <profile> 
+     <id>production</id> 
+        <activation> 
+      <os> 
+         <name>windows seven </name> 
+         <family> Windows </family> 
+         <arch> x86 </arch> 
+         <version> 5.1.2600 </version> 
+      </os> 
+   </activation>
+         <build> 
+            <plugins> 
+              <plugin> 
+                  <groupId> org.apache.maven.plugins </groupId> 
+                  <artifactId> maven-compiler-plugin </artifactId> 
+                  <configuration> 
+                      <debug> false </debug>  
+                      <optimize> true </optimize> 
+                  </configuration> 
+                </plugin> 
+            </plugins> 
+         </build> 
+   </profile>
+</profiles>
+
+
+
+
+
+    <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${version}</version><!--aqui llamamos ala propiedad version-->
+      <scope>test</scope>
+    </dependency>
+<!--
+     <dependency>
+         <groupId>com.companyname.common-lib</groupId>
+         <artifactId>common-lib</artifactId>
+         <version>1.0.0</version>
+      </dependency> -->
+  </dependencies>
+
+    <repositories>
+      <repository>
+         <id>companyname.lib1</id>
+         <url>http://download.companyname.org/maven2/lib1</url>
+      </repository>
+      <repository>
+         <id>companyname.lib2</id>
+         <url>http://download.companyname.org/maven2/lib2</url>
+      </repository>
+   </repositories>
+   <!--<distributionManagement>
+    <repository>
+      <id>mycompany-repository</id>
+      <name>MyCompany Repository</name>
+      <url>scp://repository.mycompany.com/repository/maven2</url>
+    </repository>
+  </distributionManagement>-->
+</project>
